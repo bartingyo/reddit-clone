@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { cva, VariantProps } from "class-variance-authority";
 import { ComponentProps } from "react";
 
@@ -29,12 +30,13 @@ type ButtonProps = ComponentProps<"button"> &
 export default function Button({
   isIcon,
   variant,
+  className,
   size,
   ...buttonProps
 }: ButtonProps) {
   return (
     <button
-      className={buttonVariants({ variant, size, isIcon })}
+      className={cn(buttonVariants({ variant, size, isIcon }), className)}
       data-shape={isIcon ? "circle" : "pill"}
       {...buttonProps}
     />

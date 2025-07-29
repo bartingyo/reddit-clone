@@ -1,6 +1,8 @@
 import "@/app/globals.css";
+import { AppSidebar } from "@/components/layouts/app-sidebar";
 
 import Header from "@/components/layouts/header";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -17,8 +19,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        <Header />
-        <main className="pt-14 p-4">{children}</main>
+        <SidebarProvider>
+          <Header />
+
+          <AppSidebar />
+          <main className="pt-14 p-4">{children}</main>
+        </SidebarProvider>
       </body>
     </html>
   );
