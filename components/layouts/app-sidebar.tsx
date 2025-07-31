@@ -1,13 +1,18 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
-
+import ArrowUpCircleOutline from "@/components/icons/arrow-up-circle-outline";
+import ArrowUpCircleSolid from "@/components/icons/arrow-up-circle-solid";
+import CheckCircleOutline from "@/components/icons/check-circle-outline";
+import CheckCircleSolid from "@/components/icons/check-circle-solid";
+import HomeOutline from "@/components/icons/home-outline";
+import HomeSolid from "@/components/icons/home-solid";
+import UsersOutline from "@/components/icons/users-outline";
+import UsersSolid from "@/components/icons/users-solid";
+import AppSidebarMenuButton from "@/components/layouts/app-sidebar-menu-button";
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem
 } from "@/components/ui/sidebar";
 
@@ -15,28 +20,27 @@ import {
 const items = [
   {
     title: "Home",
-    url: "#",
-    icon: Home
+    url: "/",
+    icon: <HomeOutline />,
+    selected: <HomeSolid />
   },
   {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox
+    title: "Popular",
+    url: "/popular",
+    icon: <ArrowUpCircleOutline />,
+    selected: <ArrowUpCircleSolid />
   },
   {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar
+    title: "Explore",
+    url: "/explore",
+    icon: <UsersOutline />,
+    selected: <UsersSolid />
   },
   {
-    title: "Search",
-    url: "#",
-    icon: Search
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings
+    title: "All",
+    url: "/all",
+    icon: <CheckCircleOutline />,
+    selected: <CheckCircleSolid />
   }
 ];
 
@@ -45,17 +49,11 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
+                  <AppSidebarMenuButton {...item} />
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
