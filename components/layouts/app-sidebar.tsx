@@ -7,6 +7,7 @@ import HomeSolid from "@/components/icons/home-solid";
 import UsersOutline from "@/components/icons/users-outline";
 import UsersSolid from "@/components/icons/users-solid";
 import AppSidebarMenuButton from "@/components/layouts/app-sidebar-menu-button";
+import AppSidebarMenuCollapsible from "@/components/layouts/app-sidebar-menu-collapsible";
 import {
   Sidebar,
   SidebarContent,
@@ -62,6 +63,11 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarSeparator />
+
+        <AppSidebarMenuCollapsible title="Communities">
+          content
+        </AppSidebarMenuCollapsible>
+
         <SidebarSeparator />
         <SidebarSeparator />
         <SidebarSeparator />
