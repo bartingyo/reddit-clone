@@ -13,7 +13,8 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
-  SidebarMenuItem
+  SidebarMenuItem,
+  SidebarSeparator
 } from "@/components/ui/sidebar";
 
 // Menu items.
@@ -59,6 +60,11 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        <SidebarSeparator />
+        <SidebarSeparator />
+        <SidebarSeparator />
+        <SidebarSeparator />
       </SidebarContent>
     </Sidebar>
   );
