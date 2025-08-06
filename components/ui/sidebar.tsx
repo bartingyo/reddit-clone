@@ -486,7 +486,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 const sidebarMenuButtonVariants = cva(
   cn(
-    "h-10 px-4 py-1 flex items-center gap-2",
+    "h-10 w-full px-4 py-1 flex items-center gap-2",
     "hover:bg-[#F6F8F9]",
     "active:bg-[#00000026]",
     "data-[active='true']:bg-[#E5EBEE]"
