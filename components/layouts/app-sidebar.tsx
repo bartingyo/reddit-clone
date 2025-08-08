@@ -4,6 +4,8 @@ import CheckCircleOutline from "@/components/icons/check-circle-outline";
 import CheckCircleSolid from "@/components/icons/check-circle-solid";
 import HomeOutline from "@/components/icons/home-outline";
 import HomeSolid from "@/components/icons/home-solid";
+import SettingsOutline from "@/components/icons/settings-outline";
+import SettingsSolid from "@/components/icons/settings-solid";
 import UsersOutline from "@/components/icons/users-outline";
 import UsersSolid from "@/components/icons/users-solid";
 import AppSidebarMenuButton from "@/components/layouts/app-sidebar-menu-button";
@@ -17,6 +19,8 @@ import {
   SidebarMenuItem,
   SidebarSeparator
 } from "@/components/ui/sidebar";
+import CommunityCreate from "@/features/communities/components/community-create";
+import CommunityNavItems from "@/features/communities/components/community-nav-items";
 
 // Menu items.
 const items = [
@@ -65,7 +69,22 @@ export function AppSidebar() {
         <SidebarSeparator />
 
         <AppSidebarMenuCollapsible title="Communities">
-          content
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <CommunityCreate />
+            </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <AppSidebarMenuButton
+                title="Manage Communities"
+                url="/communities"
+                icon={<SettingsOutline />}
+                selected={<SettingsSolid />}
+              />
+            </SidebarMenuItem>
+
+            <CommunityNavItems />
+          </SidebarMenu>
         </AppSidebarMenuCollapsible>
 
         <SidebarSeparator />
