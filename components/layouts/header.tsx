@@ -9,7 +9,7 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <header className="fixed z-60 w-full border-b bg-background h-14 px-4 flex items-center justify-between">
+    <header className="fixed z-50 w-full border-b bg-background h-14 px-4 flex items-center justify-between">
       <div className="flex items-center gap-2">
         <SidebarTrigger />
 
