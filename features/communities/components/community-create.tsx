@@ -10,6 +10,7 @@ import {
   DialogTrigger
 } from "@/components/ui/dialog";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
+import CommunityPreview from "@/features/communities/components/community-preview";
 
 export default function CommunityCreate() {
   return (
@@ -33,6 +34,9 @@ export default function CommunityCreate() {
             all about.
           </DialogDescription>
         </DialogHeader>
+
+        {/* Preview card */}
+        <CommunityPreview />
 
         <DialogFooter className="flex-row justify-end">
           <Button variant="secondary" size="lg">
