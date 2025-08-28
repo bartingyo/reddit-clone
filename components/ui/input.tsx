@@ -1,5 +1,6 @@
 "use client";
 
+import ExclamationCircleOutline from "@/components/icons/exclamation-circle-outline";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { ComponentProps, useId } from "react";
@@ -17,9 +18,10 @@ function Input({ className, type, label, ...props }: Props) {
         "group",
         "bg-[#E5EBEE] hover:bg-[#DBE4E9]",
         "h-14 px-4 rounded-[20px]",
-        "flex items-center",
+        "flex items-center gap-2",
         "focus-within:outline",
         "cursor-text",
+        "has-[input[aria-invalid=true]]:outline has-[input[aria-invalid=true]]:outline-destructive",
         className
       )}
     >
@@ -53,6 +55,14 @@ function Input({ className, type, label, ...props }: Props) {
           {...props}
         />
       </div>
+
+      <ExclamationCircleOutline
+        className={cn(
+          "hidden",
+          "group-has-[input[aria-invalid=true]]:block ",
+          "group-has-[input[aria-invalid=true]]:text-destructive"
+        )}
+      />
     </Label>
   );
 }

@@ -33,3 +33,8 @@ export const Typed = {
     defaultValue: "typed"
   }
 } satisfies Story;
+export const Error = {
+  args: {
+    "aria-invalid": true
+  }
+} satisfies Story;
