@@ -19,6 +19,11 @@ export const WithoutLabel = {
     label: undefined
   }
 } satisfies Story;
+export const Required = {
+  args: {
+    required: true
+  }
+} satisfies Story;
 export const Focused = {
   play: async ({ canvas, userEvent }) => {
     // grab input element
