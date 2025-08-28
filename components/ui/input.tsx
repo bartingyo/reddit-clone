@@ -24,7 +24,11 @@ function Input({ className, type, label, ...props }: Props) {
       )}
     >
       <div
-        className={cn("relative w-full", label && "focus-within:translate-y-2")}
+        className={cn(
+          "relative w-full",
+          label && "focus-within:translate-y-2",
+          "group-has-[input:not(:placeholder-shown)]:translate-y-2"
+        )}
       >
         {label && (
           <span
@@ -32,6 +36,7 @@ function Input({ className, type, label, ...props }: Props) {
             className={cn(
               "absolute text-[#5C6C74] text-base",
               "group-focus-within:-translate-y-4 group-focus-within:text-xs",
+              "group-has-[input:not(:placeholder-shown)]:-translate-y-4 group-has-[input:not(:placeholder-shown)]:text-xs",
               "duration-300"
             )}
           >
@@ -41,7 +46,9 @@ function Input({ className, type, label, ...props }: Props) {
         <input
           type={type}
           data-slot="input"
+          data-testid="test-input"
           className={cn("outline-none w-full")}
+          placeholder=""
           aria-labelledby={label && labelId}
           {...props}
         />

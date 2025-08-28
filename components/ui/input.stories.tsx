@@ -19,3 +19,17 @@ export const WithoutLabel = {
     label: undefined
   }
 } satisfies Story;
+export const Focused = {
+  play: async ({ canvas, userEvent }) => {
+    // grab input element
+    const inputElement = canvas.getByTestId("test-input");
+
+    // click element
+    userEvent.click(inputElement);
+  }
+} satisfies Story;
+export const Typed = {
+  args: {
+    defaultValue: "typed"
+  }
+} satisfies Story;
