@@ -1,21 +1,72 @@
-import * as React from "react"
+"use client";
 
-import { cn } from "@/lib/utils"
+import ExclamationCircleOutline from "@/components/icons/exclamation-circle-outline";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import { ComponentProps, useId } from "react";
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+type Props = {
+  label?: string;
+} & ComponentProps<"input">;
+
+function Input({ className, type, label, required, ...props }: Props) {
+  const labelId = useId();
+
   return (
-    <input
-      type={type}
-      data-slot="input"
+    <Label
       className={cn(
-        "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-        "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+        "group",
+        "bg-[#E5EBEE] hover:bg-[#DBE4E9]",
+        "h-14 px-4 rounded-[20px]",
+        "flex items-center gap-2",
+        "focus-within:outline",
+        "cursor-text",
+        "has-[input[aria-invalid=true]]:outline has-[input[aria-invalid=true]]:outline-destructive",
         className
       )}
-      {...props}
-    />
-  )
+    >
+      <div
+        className={cn(
+          "relative w-full",
+          label && "focus-within:translate-y-2",
+          "group-has-[input:not(:placeholder-shown)]:translate-y-2"
+        )}
+      >
+        {label && (
+          <span
+            id={labelId}
+            className={cn(
+              "absolute text-[#5C6C74] text-base",
+              "group-focus-within:-translate-y-4 group-focus-within:text-xs",
+              "group-has-[input:not(:placeholder-shown)]:-translate-y-4 group-has-[input:not(:placeholder-shown)]:text-xs",
+              "duration-300"
+            )}
+          >
+            {label}
+            {required && <span className="text-destructive ml-1">*</span>}
+          </span>
+        )}
+        <input
+          type={type}
+          data-slot="input"
+          data-testid="test-input"
+          className={cn("outline-none w-full")}
+          placeholder=""
+          required={required}
+          aria-labelledby={label && labelId}
+          {...props}
+        />
+      </div>
+
+      <ExclamationCircleOutline
+        className={cn(
+          "hidden",
+          "group-has-[input[aria-invalid=true]]:block ",
+          "group-has-[input[aria-invalid=true]]:text-destructive"
+        )}
+      />
+    </Label>
+  );
 }
 
-export { Input }
+export { Input };
