@@ -9,7 +9,7 @@ type Props = {
   label?: string;
 } & ComponentProps<"textarea">;
 
-function Textarea({ className, label, required, ...props }: Props) {
+function Textarea({ className, label, required, rows, ...props }: Props) {
   const labelId = useId();
 
   return (
@@ -17,7 +17,7 @@ function Textarea({ className, label, required, ...props }: Props) {
       className={cn(
         "group",
         "bg-[#E5EBEE] hover:bg-[#DBE4E9]",
-        "h-14 px-4 rounded-[20px]",
+        "min-h-14 p-4 rounded-[20px]",
         "flex items-center gap-2",
         "focus-within:outline",
         "cursor-text",
@@ -27,9 +27,9 @@ function Textarea({ className, label, required, ...props }: Props) {
     >
       <div
         className={cn(
-          "relative w-full",
-          label && "focus-within:translate-y-2",
-          "group-has-[textarea:not(:placeholder-shown)]:translate-y-2"
+          "relative w-full flex",
+          label &&
+            "focus-within:translate-y-2 group-has-[textarea:not(:placeholder-shown)]:translate-y-2"
         )}
       >
         {label && (
@@ -49,9 +49,13 @@ function Textarea({ className, label, required, ...props }: Props) {
         <textarea
           data-slot="textarea"
           data-testid="test-textarea"
-          className={cn("outline-none w-full")}
+          className={cn(
+            "outline-none w-full resize-none",
+            !rows && "field-sizing-content"
+          )}
           placeholder=""
           required={required}
+          rows={rows}
           aria-labelledby={label && labelId}
           {...props}
         />

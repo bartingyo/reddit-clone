@@ -43,3 +43,13 @@ export const Error = {
     "aria-invalid": true
   }
 } satisfies Story;
+export const Multiline = {
+  args: {
+    defaultValue: "M\nU\nL\nT\nI\nL\nI\nN\nE"
+  }
+} satisfies Story;
+export const FixedRows = {
+  args: {
+    rows: 3
+  }
+} satisfies Story;
