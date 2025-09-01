@@ -30,6 +30,7 @@ import z from "zod";
 
 const MIN_NAME_LENGTH = 3;
 const MAX_NAME_LENGTH = 21;
+const MIN_DESCRIPTION_LENGTH = 1;
 const TEXTAREA_ROWS = 8;
 
 const formSchema = z.object({
@@ -51,6 +52,8 @@ export default function CommunityCreate() {
   });
 
   const { name, description } = form.watch();
+  const isNameInvalid = name.length < MIN_NAME_LENGTH;
+  const isDescriptionInvalid = description.length < MIN_DESCRIPTION_LENGTH;
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -159,7 +162,11 @@ export default function CommunityCreate() {
           <Button variant="secondary" size="lg">
             Cancel
           </Button>
-          <Button variant="primary" size="lg">
+          <Button
+            variant="primary"
+            size="lg"
+            disabled={isNameInvalid || isDescriptionInvalid}
+          >
             Next
           </Button>
         </DialogFooter>
