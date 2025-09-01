@@ -82,7 +82,13 @@ export default function CommunityCreate() {
         </DialogHeader>
 
         {/* Preview card */}
-        <CommunityPreview avatar="" banner="" withImages={false} />
+        <CommunityPreview
+          name={name}
+          description={description}
+          avatar=""
+          banner=""
+          withImages={false}
+        />
 
         {/* Form */}
         <Form {...form}>
