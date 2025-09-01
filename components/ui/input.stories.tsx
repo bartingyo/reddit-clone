@@ -43,3 +43,8 @@ export const Error = {
     "aria-invalid": true
   }
 } satisfies Story;
+export const Prefix = {
+  args: {
+    prefix: "r/"
+  }
+} satisfies Story;
