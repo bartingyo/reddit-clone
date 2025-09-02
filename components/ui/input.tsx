@@ -7,9 +7,10 @@ import { ComponentProps, useId } from "react";
 
 type Props = {
   label?: string;
+  prefix?: string;
 } & ComponentProps<"input">;
 
-function Input({ className, type, label, required, ...props }: Props) {
+function Input({ className, prefix, type, label, required, ...props }: Props) {
   const labelId = useId();
 
   return (
@@ -27,7 +28,7 @@ function Input({ className, type, label, required, ...props }: Props) {
     >
       <div
         className={cn(
-          "relative w-full",
+          "relative w-full flex items-center",
           label && "focus-within:translate-y-2",
           "group-has-[input:not(:placeholder-shown)]:translate-y-2"
         )}
@@ -46,6 +47,13 @@ function Input({ className, type, label, required, ...props }: Props) {
             {required && <span className="text-destructive ml-1">*</span>}
           </span>
         )}
+
+        {prefix && (
+          <span className="hidden group-has-[input:not(:placeholder-shown)]:inline">
+            {prefix}
+          </span>
+        )}
+
         <input
           type={type}
           data-slot="input"

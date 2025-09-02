@@ -4,12 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 
 type Props = {
+  name: string;
+  description: string;
   withImages: boolean;
   banner: string;
   avatar: string;
 };
 
 export default function CommunityPreview({
+  name,
+  description,
   avatar,
   banner,
   withImages
@@ -46,13 +50,15 @@ export default function CommunityPreview({
 
         <div>
           <CardTitle className="text-[#181C1F] text-xl font-semibold mb-1">
-            r/communityname
+            r/{name || "communityname"}
           </CardTitle>
           <p className="text-[#5C6C74] text-xs">1 member ·1 online</p>
         </div>
       </CardHeader>
       <CardContent className="px-4">
-        <p className="text-[#333D42] text-sm">Your community description</p>
+        <p className="text-[#333D42] text-sm">
+          {description || "Your community description"}
+        </p>
       </CardContent>
     </Card>
   );

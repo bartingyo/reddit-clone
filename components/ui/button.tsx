@@ -5,7 +5,7 @@ import { ComponentProps } from "react";
 const buttonVariants = cva(
   cn(
     "flex items-center justify-center cursor-pointer rounded-full font-semibold",
-    "data-[shape='circle']:px-0"
+    "data-[shape='circle']:px-0 disabled:bg-[#f3f3f3] disabled:text-[#b7b7b7]"
   ),
   {
     variants: {
