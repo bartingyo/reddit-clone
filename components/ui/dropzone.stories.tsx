@@ -27,3 +27,20 @@ export const Default = {
     );
   }
 } satisfies Story;
+
+export const WithFiles = {
+  render: () => {
+    const [files, setFiles] = useState<File[]>([new File([], "test1")]);
+
+    const onDrop = (acceptedFiles: File[]) => {
+      setFiles(acceptedFiles);
+    };
+    console.log(files);
+
+    return (
+      <Dropzone src={files} onDrop={onDrop}>
+        <DropzoneButton />
+      </Dropzone>
+    );
+  }
+} satisfies Story;

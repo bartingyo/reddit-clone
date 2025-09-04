@@ -88,12 +88,12 @@ export const Dropzone = ({
 };
 
 export function DropzoneButton() {
-  const { onClick } = useDropzoneContext();
+  const { src, onClick } = useDropzoneContext();
 
   return (
-    <Button variant="secondary" size="sm" onClick={onClick}>
+    <Button variant="bordered" size="sm" onClick={onClick}>
       <ImageOutline className="size-5" />
-      <span>Add</span>
+      <span>{src ? "Change" : "Add"}</span>
     </Button>
   );
 }

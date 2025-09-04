@@ -15,7 +15,9 @@ const buttonVariants = cva(
         primary:
           "text-[#ffffff] bg-[#0A449B] hover:bg-[#0A2F6C] active:bg-[#09285c]",
         secondary: "bg-[#E5EBEE] hover:bg-[#DBE4E9] active:bg-[#bbc2c5]",
-        plain: "bg-transparent hover:bg-[#DBE4E9] active:bg-[#bbc2c5]"
+        plain: "bg-transparent hover:bg-[#DBE4E9] active:bg-[#bbc2c5]",
+        bordered:
+          "bg-transparent hover:bg-transparent active:bg-[#d9d9d9] border border-[#0000007F] hover:border-[#181C1F] active:border-[#181C1F]"
       },
       size: {
         sm: cn("h-8 px-3 text-xs", "data-[shape='circle']:size-8"),
