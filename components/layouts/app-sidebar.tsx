@@ -8,8 +8,8 @@ import SettingsOutline from "@/components/icons/settings-outline";
 import SettingsSolid from "@/components/icons/settings-solid";
 import UsersOutline from "@/components/icons/users-outline";
 import UsersSolid from "@/components/icons/users-solid";
-import AppSidebarMenuButton from "@/components/layouts/app-sidebar-menu-button";
 import AppSidebarMenuCollapsible from "@/components/layouts/app-sidebar-menu-collapsible";
+import AppSidebarMenuLink from "@/components/layouts/app-sidebar-menu-link";
 import {
   Sidebar,
   SidebarContent,
@@ -19,7 +19,7 @@ import {
   SidebarMenuItem,
   SidebarSeparator
 } from "@/components/ui/sidebar";
-import CommunityCreate from "@/features/communities/components/community-create";
+import CommunityCreateDialog from "@/features/communities/components/community-create-dialog";
 import CommunityNavItems from "@/features/communities/components/community-nav-items";
 
 // Menu items.
@@ -59,7 +59,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <AppSidebarMenuButton {...item} />
+                  <AppSidebarMenuLink {...item} />
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
@@ -71,11 +71,11 @@ export function AppSidebar() {
         <AppSidebarMenuCollapsible title="Communities">
           <SidebarMenu>
             <SidebarMenuItem>
-              <CommunityCreate />
+              <CommunityCreateDialog />
             </SidebarMenuItem>
 
             <SidebarMenuItem>
-              <AppSidebarMenuButton
+              <AppSidebarMenuLink
                 title="Manage Communities"
                 url="/communities"
                 icon={<SettingsOutline />}
