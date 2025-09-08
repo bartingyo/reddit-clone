@@ -58,16 +58,19 @@ export default function CommunityCreateDialog() {
 
       <DialogContent className="p-4 rounded-2xl gap-8">
         {/* Header */}
-        <CommunityCreateDialogHeader />
+        <CommunityCreateDialogHeader stage={stage} />
 
         {/* Preview card */}
-        <CommunityPreview
-          name={name}
-          description={description}
-          avatar=""
-          banner=""
-          withImages={false}
-        />
+        {(stage === CommunityCreateStage.One ||
+          stage === CommunityCreateStage.Two) && (
+          <CommunityPreview
+            name={name}
+            description={description}
+            avatar=""
+            banner=""
+            withImages={stage === CommunityCreateStage.Two}
+          />
+        )}
 
         {/* Form */}
         <Form {...form}>
