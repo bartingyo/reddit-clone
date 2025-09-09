@@ -13,11 +13,17 @@ import {
   MIN_NAME_LENGTH
 } from "@/features/communities/constants";
 import { communityFormSchema } from "@/features/communities/schema";
+import { CommunityCreateStage } from "@/features/communities/types";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
 export default function CommunityCreateDialog() {
+  const [stage, setStage] = useState<CommunityCreateStage>(
+    CommunityCreateStage.One
+  );
+
   const form = useForm<z.infer<typeof communityFormSchema>>({
     mode: "onTouched",
     resolver: zodResolver(communityFormSchema),
@@ -31,9 +37,18 @@ export default function CommunityCreateDialog() {
   const isNameInvalid = name.length < MIN_NAME_LENGTH;
   const isDescriptionInvalid = description.length < MIN_DESCRIPTION_LENGTH;
 
-  function onSubmit(values: z.infer<typeof communityFormSchema>) {
+  const handleBack = () => {
+    // handle state of the stage
+    setStage((prev) => prev - 1);
+  };
+  const handleNext = () => {
+    // handle state of the stage
+    setStage((prev) => prev + 1);
+  };
+
+  const onSubmit = (values: z.infer<typeof communityFormSchema>) => {
     console.log(values);
-  }
+  };
 
   return (
     <Dialog>
@@ -43,31 +58,41 @@ export default function CommunityCreateDialog() {
 
       <DialogContent className="p-4 rounded-2xl gap-8">
         {/* Header */}
-        <CommunityCreateDialogHeader />
+        <CommunityCreateDialogHeader stage={stage} />
 
         {/* Preview card */}
-        <CommunityPreview
-          name={name}
-          description={description}
-          avatar=""
-          banner=""
-          withImages={false}
-        />
+        {(stage === CommunityCreateStage.One ||
+          stage === CommunityCreateStage.Two) && (
+          <CommunityPreview
+            name={name}
+            description={description}
+            avatar=""
+            banner=""
+            withImages={stage === CommunityCreateStage.Two}
+          />
+        )}
 
         {/* Form */}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <CommunityCreateStageOne
-              formControl={form.control}
-              name={name}
-              description={description}
-            />
+            {stage === CommunityCreateStage.One && (
+              <CommunityCreateStageOne
+                formControl={form.control}
+                name={name}
+                description={description}
+              />
+            )}
+
+            {stage === CommunityCreateStage.Two && <div>Two</div>}
           </form>
         </Form>
 
         {/* Footer */}
         <CommunityCreateDialogFooter
+          stage={stage}
           isNextDisabled={isNameInvalid || isDescriptionInvalid}
+          onBackClick={handleBack}
+          onNextClick={handleNext}
         />
       </DialogContent>
     </Dialog>
