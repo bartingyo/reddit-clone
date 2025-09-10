@@ -29,8 +29,8 @@ export default function CommunityCreateDialog() {
   const [stage, setStage] = useState<CommunityCreateStage>(
     CommunityCreateStage.Two
   );
-  const [bannerImage, setBannerImage] = useState<string>("");
-  const [avatarImage, setAvatarImage] = useState<string>("");
+  const [bannerImage, setBannerImage] = useState<string | undefined>(undefined);
+  const [avatarImage, setAvatarImage] = useState<string | undefined>(undefined);
 
   const form = useForm<z.infer<typeof communityFormSchema>>({
     mode: "onTouched",
@@ -68,12 +68,19 @@ export default function CommunityCreateDialog() {
   };
 
   const handleFileError = (error: Error, type: CommunityMediaType) => {
-    form.resetField(type);
+    resetField(type);
     form.setError(type, { message: error.message });
   };
 
   const handleFileDelete = (type: CommunityMediaType) => {
+    resetField(type);
+  };
+
+  const resetField = (type: CommunityMediaType) => {
     form.resetField(type);
+
+    if (type === "avatar") setAvatarImage(undefined);
+    if (type === "banner") setBannerImage(undefined);
   };
 
   const onSubmit = (values: z.infer<typeof communityFormSchema>) => {

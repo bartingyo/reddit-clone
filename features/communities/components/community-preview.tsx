@@ -7,8 +7,8 @@ type Props = {
   name: string;
   description: string;
   withImages: boolean;
-  banner: string;
-  avatar: string;
+  banner?: string;
+  avatar?: string;
 };
 
 export default function CommunityPreview({
