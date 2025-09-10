@@ -7,6 +7,9 @@ import { Form } from "@/components/ui/form";
 import CommunityCreateDialogFooter from "@/features/communities/components/community-create-dialog-footer";
 import CommunityCreateDialogHeader from "@/features/communities/components/community-create-dialog-header";
 import CommunityCreateStageOne from "@/features/communities/components/community-create-stage-one";
+import CommunityCreateStageTwo, {
+  CommunityMediaType
+} from "@/features/communities/components/community-create-stage-two";
 import CommunityPreview from "@/features/communities/components/community-preview";
 import {
   MIN_DESCRIPTION_LENGTH,
@@ -21,7 +24,7 @@ import z from "zod";
 
 export default function CommunityCreateDialog() {
   const [stage, setStage] = useState<CommunityCreateStage>(
-    CommunityCreateStage.One
+    CommunityCreateStage.Two
   );
 
   const form = useForm<z.infer<typeof communityFormSchema>>({
@@ -33,7 +36,7 @@ export default function CommunityCreateDialog() {
     }
   });
 
-  const { name, description } = form.watch();
+  const { name, description, banner, avatar } = form.watch();
   const isNameInvalid = name.length < MIN_NAME_LENGTH;
   const isDescriptionInvalid = description.length < MIN_DESCRIPTION_LENGTH;
 
@@ -44,6 +47,15 @@ export default function CommunityCreateDialog() {
   const handleNext = () => {
     // handle state of the stage
     setStage((prev) => prev + 1);
+  };
+
+  const handleFileError = (error: Error, type: CommunityMediaType) => {
+    form.resetField(type);
+    form.setError(type, { message: error.message });
+  };
+
+  const handleFileDelete = (type: CommunityMediaType) => {
+    form.resetField(type);
   };
 
   const onSubmit = (values: z.infer<typeof communityFormSchema>) => {
@@ -74,7 +86,7 @@ export default function CommunityCreateDialog() {
 
         {/* Form */}
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)}>
             {stage === CommunityCreateStage.One && (
               <CommunityCreateStageOne
                 formControl={form.control}
@@ -83,7 +95,15 @@ export default function CommunityCreateDialog() {
               />
             )}
 
-            {stage === CommunityCreateStage.Two && <div>Two</div>}
+            {stage === CommunityCreateStage.Two && (
+              <CommunityCreateStageTwo
+                formControl={form.control}
+                banner={banner}
+                avatar={avatar}
+                onFileDelete={handleFileDelete}
+                onFileError={handleFileError}
+              />
+            )}
           </form>
         </Form>
 

@@ -28,7 +28,7 @@ export default function CommunityCreateStageOne({
   name
 }: Props) {
   return (
-    <>
+    <div className="space-y-8">
       <FormField
         control={formControl}
         name="name"
@@ -87,6 +87,6 @@ export default function CommunityCreateStageOne({
           </FormItem>
         )}
       />
-    </>
+    </div>
   );
 }
