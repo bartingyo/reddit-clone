@@ -7,16 +7,19 @@ import { Form } from "@/components/ui/form";
 import CommunityCreateDialogFooter from "@/features/communities/components/community-create-dialog-footer";
 import CommunityCreateDialogHeader from "@/features/communities/components/community-create-dialog-header";
 import CommunityCreateStageOne from "@/features/communities/components/community-create-stage-one";
-import CommunityCreateStageTwo, {
-  CommunityMediaType
-} from "@/features/communities/components/community-create-stage-two";
+import CommunityCreateStageTwo from "@/features/communities/components/community-create-stage-two";
 import CommunityPreview from "@/features/communities/components/community-preview";
 import {
   MIN_DESCRIPTION_LENGTH,
   MIN_NAME_LENGTH
 } from "@/features/communities/constants";
 import { communityFormSchema } from "@/features/communities/schema";
-import { CommunityCreateStage } from "@/features/communities/types";
+import {
+  CommunityCreateStage,
+  CommunityMediaType,
+  ReadAs
+} from "@/features/communities/types";
+import { readFileAsync } from "@/lib/read-file";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -43,58 +46,21 @@ export default function CommunityCreateDialog() {
   const isDescriptionInvalid = description.length < MIN_DESCRIPTION_LENGTH;
 
   const handleBack = () => {
-    // handle state of the stage
     setStage((prev) => prev - 1);
   };
   const handleNext = () => {
-    // handle state of the stage
     setStage((prev) => prev + 1);
-  };
-
-  enum ReadAs {
-    ReadAsText = "readAsText",
-    ReadAsArrayBuffer = "readAsArrayBuffer",
-    ReadAsDataURL = "readAsDataURL"
-  }
-
-  const readFileAsync = (
-    file: File,
-    readAs: ReadAs
-  ): Promise<string | ArrayBuffer | null> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-
-      reader.onload = (event) => {
-        const target = event.target;
-        if (target) {
-          const result = target.result;
-
-          resolve(result);
-        } else {
-          reject(new Error("Invalid target"));
-        }
-      };
-
-      reader.onerror = () => {
-        reject(new Error("Something has gone wrong while reading the file"));
-      };
-
-      reader[readAs](file);
-    });
   };
 
   const handleFile = async (file: File, type: CommunityMediaType) => {
     try {
-      // file must be url in order to be rendered as image
       const result = await readFileAsync(file, ReadAs.ReadAsDataURL);
 
-      // set the value in state => bannerImage or avatarImage
       if (typeof result === "string") {
         if (type === "banner") setBannerImage(result);
         if (type === "avatar") setAvatarImage(result);
       }
     } catch (error) {
-      // if error happens while doing it then set the error to the specific form field
       if (error instanceof Error) {
         form.setError(type, { message: error.message });
       }

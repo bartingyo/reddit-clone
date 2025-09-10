@@ -8,7 +8,9 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/ui/form";
+import { COMMUNITY_MEDIA_TYPES } from "@/features/communities/constants";
 import { communityFormSchema } from "@/features/communities/schema";
+import { CommunityMediaType } from "@/features/communities/types";
 import { cn } from "@/lib/utils";
 import { Control } from "react-hook-form";
 import z from "zod";
@@ -22,9 +24,6 @@ type Props = {
   onFileError: (error: Error, type: CommunityMediaType) => void;
 };
 
-const COMMUNITY_CREATE_MEDIA_TYPES = ["banner", "avatar"] as const;
-export type CommunityMediaType = (typeof COMMUNITY_CREATE_MEDIA_TYPES)[number];
-
 export default function CommunityCreateStageTwo({
   formControl,
   banner,
@@ -33,7 +32,7 @@ export default function CommunityCreateStageTwo({
   onFileDelete,
   onFileError
 }: Props) {
-  return COMMUNITY_CREATE_MEDIA_TYPES.map((type) => (
+  return COMMUNITY_MEDIA_TYPES.map((type) => (
     <FormField
       key={type}
       control={formControl}
