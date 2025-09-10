@@ -17,6 +17,7 @@ type Props = {
   formControl: Control<z.infer<typeof communityFormSchema>>;
   banner?: File;
   avatar?: File;
+  onFileChange: (file: File, type: CommunityMediaType) => void;
   onFileDelete: (type: CommunityMediaType) => void;
   onFileError: (error: Error, type: CommunityMediaType) => void;
 };
@@ -28,6 +29,7 @@ export default function CommunityCreateStageTwo({
   formControl,
   banner,
   avatar,
+  onFileChange,
   onFileDelete,
   onFileError
 }: Props) {
@@ -59,6 +61,7 @@ export default function CommunityCreateStageTwo({
                 }
                 onDrop={(files: File[]) => {
                   onChange(files[0]);
+                  onFileChange(files[0], type);
                 }}
                 onError={(error) => {
                   onFileError(error, type);
