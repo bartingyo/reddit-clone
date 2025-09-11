@@ -53,7 +53,7 @@ export const Dropzone = ({
   children,
   ...props
 }: DropzoneProps) => {
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps } = useDropzone({
     accept,
     maxFiles,
     maxSize,
@@ -89,11 +89,16 @@ export const Dropzone = ({
 
 export function DropzoneButton() {
   const { src, onClick } = useDropzoneContext();
+  const hasFiles = (src?.length ?? 0) > 0;
 
   return (
-    <Button variant="bordered" size="sm" onClick={onClick}>
+    <Button
+      variant={hasFiles ? "bordered" : "secondary"}
+      size="sm"
+      onClick={onClick}
+    >
       <ImageOutline className="size-5" />
-      <span>{src ? "Change" : "Add"}</span>
+      <span>{hasFiles ? "Change" : "Add"}</span>
     </Button>
   );
 }
