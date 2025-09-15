@@ -37,7 +37,7 @@ export default function CommunityCreateStageTwo({
       key={type}
       control={formControl}
       name={type}
-      render={({ field: { onChange, ...restFields } }) => (
+      render={() => (
         <FormItem className="gap-1">
           <div
             className={cn(
@@ -59,13 +59,11 @@ export default function CommunityCreateStageTwo({
                     : []
                 }
                 onDrop={(files: File[]) => {
-                  onChange(files[0]);
                   onFileChange(files[0], type);
                 }}
                 onError={(error) => {
                   onFileError(error, type);
                 }}
-                {...restFields}
               >
                 <DropzoneButton />
               </Dropzone>
