@@ -20,7 +20,7 @@ import {
   CommunityMediaType
 } from "@/features/communities/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { MouseEvent, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -49,7 +49,18 @@ export default function CommunityCreateDialog() {
   const { name, description, banner, avatar } = form.watch();
   const isNameInvalid = name.length < MIN_NAME_LENGTH;
   const isDescriptionInvalid = description.length < MIN_DESCRIPTION_LENGTH;
+  const isCropping =
+    (stage === CommunityCreateStage.BannerStage ||
+      stage === CommunityCreateStage.AvatarStage) &&
+    !!image;
 
+  const handleClose = (event: MouseEvent<HTMLButtonElement>) => {
+    if (isCropping) {
+      event.preventDefault();
+      setStage(CommunityCreateStage.Two);
+      setImage(null);
+    }
+  };
   const handleBack = () => {
     setStage((prev) => prev - 1);
   };
@@ -84,11 +95,6 @@ export default function CommunityCreateDialog() {
   const onSubmit = (values: z.infer<typeof communityFormSchema>) => {
     console.log(values);
   };
-
-  const isCropping =
-    (stage === CommunityCreateStage.BannerStage ||
-      stage === CommunityCreateStage.AvatarStage) &&
-    !!image;
 
   return (
     <Dialog>
@@ -145,8 +151,11 @@ export default function CommunityCreateDialog() {
 
         {/* Footer */}
         <CommunityCreateDialogFooter
-          stage={stage}
+          isCancelable={stage === CommunityCreateStage.One || isCropping}
+          isSavable={isCropping}
+          onSaveClick={() => {}} // TODO: add functionality
           isNextDisabled={isNameInvalid || isDescriptionInvalid}
+          onCloseClick={handleClose}
           onBackClick={handleBack}
           onNextClick={handleNext}
         />

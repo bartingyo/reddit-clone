@@ -1,42 +1,55 @@
 import Button from "@/components/ui/button";
 import { DialogClose, DialogFooter } from "@/components/ui/dialog";
-import { CommunityCreateStage } from "@/features/communities/types";
+import { MouseEvent } from "react";
 
 type Props = {
-  stage: CommunityCreateStage;
+  isCancelable: boolean;
+  isSavable: boolean;
   isNextDisabled: boolean;
+  onCloseClick: (event: MouseEvent<HTMLButtonElement>) => void;
+  onSaveClick: () => void;
   onBackClick: () => void;
   onNextClick: () => void;
 };
 
 export default function CommunityCreateDialogFooter({
-  stage,
   isNextDisabled,
+  isCancelable,
+  isSavable,
+  onCloseClick,
   onBackClick,
+  onSaveClick,
   onNextClick
 }: Props) {
   return (
     <DialogFooter className="flex-row justify-end">
-      {stage === CommunityCreateStage.One && (
+      {isCancelable && (
         <DialogClose asChild>
-          <Button variant="secondary" size="lg">
+          <Button variant="secondary" size="lg" onClick={onCloseClick}>
             Cancel
           </Button>
         </DialogClose>
       )}
-      {stage !== CommunityCreateStage.One && (
+      {!isCancelable && (
         <Button variant="secondary" size="lg" onClick={onBackClick}>
           Back
         </Button>
       )}
-      <Button
-        variant="primary"
-        size="lg"
-        disabled={isNextDisabled}
-        onClick={onNextClick}
-      >
-        Next
-      </Button>
+      {isSavable && (
+        <Button variant="primary" size="lg" onClick={onSaveClick}>
+          Save
+        </Button>
+      )}
+      {!isSavable && (
+        <Button
+          variant="primary"
+          size="lg"
+          disabled={isNextDisabled}
+          onClick={onNextClick}
+        >
+          Next
+        </Button>
+      )}
     </DialogFooter>
   );
 }
