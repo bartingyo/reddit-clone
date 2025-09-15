@@ -10,25 +10,30 @@ import CommunityCreateStageOne from "@/features/communities/components/community
 import CommunityCreateStageTwo from "@/features/communities/components/community-create-stage-two";
 import CommunityPreview from "@/features/communities/components/community-preview";
 import {
+  COMMUNITY_CREATE_DIALOG_HEADER_TEXT,
   MIN_DESCRIPTION_LENGTH,
   MIN_NAME_LENGTH
 } from "@/features/communities/constants";
 import { communityFormSchema } from "@/features/communities/schema";
 import {
   CommunityCreateStage,
-  CommunityMediaType,
-  ReadAs
+  CommunityMediaType
 } from "@/features/communities/types";
-import { readFileAsync } from "@/lib/read-file";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
+type CommunityImage = {
+  file: File;
+  type: CommunityMediaType;
+};
+
 export default function CommunityCreateDialog() {
   const [stage, setStage] = useState<CommunityCreateStage>(
     CommunityCreateStage.Two
   );
+  const [image, setImage] = useState<CommunityImage | null>(null);
   const [bannerImage, setBannerImage] = useState<string | undefined>(undefined);
   const [avatarImage, setAvatarImage] = useState<string | undefined>(undefined);
 
@@ -53,18 +58,11 @@ export default function CommunityCreateDialog() {
   };
 
   const handleFile = async (file: File, type: CommunityMediaType) => {
-    try {
-      const result = await readFileAsync(file, ReadAs.ReadAsDataURL);
-
-      if (typeof result === "string") {
-        if (type === "banner") setBannerImage(result);
-        if (type === "avatar") setAvatarImage(result);
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        form.setError(type, { message: error.message });
-      }
-    }
+    // set image stage with the file and type, we do not have it yet.
+    setImage({ file, type });
+    // set stage either banner cropping or avatar cropping
+    if (type === "banner") setStage(CommunityCreateStage.BannerStage);
+    if (type === "avatar") setStage(CommunityCreateStage.AvatarStage);
   };
 
   const handleFileError = (error: Error, type: CommunityMediaType) => {
@@ -87,6 +85,11 @@ export default function CommunityCreateDialog() {
     console.log(values);
   };
 
+  const isCropping =
+    (stage === CommunityCreateStage.BannerStage ||
+      stage === CommunityCreateStage.AvatarStage) &&
+    !!image;
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -95,7 +98,10 @@ export default function CommunityCreateDialog() {
 
       <DialogContent className="p-4 rounded-2xl gap-8">
         {/* Header */}
-        <CommunityCreateDialogHeader stage={stage} />
+        <CommunityCreateDialogHeader
+          title={COMMUNITY_CREATE_DIALOG_HEADER_TEXT[stage].title}
+          description={COMMUNITY_CREATE_DIALOG_HEADER_TEXT[stage].description}
+        />
 
         {/* Preview card */}
         {(stage === CommunityCreateStage.One ||
@@ -109,29 +115,33 @@ export default function CommunityCreateDialog() {
           />
         )}
 
-        {/* Form */}
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            {stage === CommunityCreateStage.One && (
-              <CommunityCreateStageOne
-                formControl={form.control}
-                name={name}
-                description={description}
-              />
-            )}
+        {isCropping && <div>Cropping</div>}
 
-            {stage === CommunityCreateStage.Two && (
-              <CommunityCreateStageTwo
-                formControl={form.control}
-                banner={banner}
-                avatar={avatar}
-                onFileChange={handleFile}
-                onFileDelete={handleFileDelete}
-                onFileError={handleFileError}
-              />
-            )}
-          </form>
-        </Form>
+        {/* Form */}
+        {!isCropping && (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              {stage === CommunityCreateStage.One && (
+                <CommunityCreateStageOne
+                  formControl={form.control}
+                  name={name}
+                  description={description}
+                />
+              )}
+
+              {stage === CommunityCreateStage.Two && (
+                <CommunityCreateStageTwo
+                  formControl={form.control}
+                  banner={banner}
+                  avatar={avatar}
+                  onFileChange={handleFile}
+                  onFileDelete={handleFileDelete}
+                  onFileError={handleFileError}
+                />
+              )}
+            </form>
+          </Form>
+        )}
 
         {/* Footer */}
         <CommunityCreateDialogFooter
