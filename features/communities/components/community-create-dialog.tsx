@@ -49,6 +49,8 @@ export default function CommunityCreateDialog() {
   const { name, description, banner, avatar } = form.watch();
   const isNameInvalid = name.length < MIN_NAME_LENGTH;
   const isDescriptionInvalid = description.length < MIN_DESCRIPTION_LENGTH;
+  const isPreviewVisible =
+    stage === CommunityCreateStage.One || stage === CommunityCreateStage.Two;
   const isCropping =
     (stage === CommunityCreateStage.BannerStage ||
       stage === CommunityCreateStage.AvatarStage) &&
@@ -110,8 +112,7 @@ export default function CommunityCreateDialog() {
         />
 
         {/* Preview card */}
-        {(stage === CommunityCreateStage.One ||
-          stage === CommunityCreateStage.Two) && (
+        {isPreviewVisible && (
           <CommunityPreview
             name={name}
             description={description}
@@ -153,11 +154,11 @@ export default function CommunityCreateDialog() {
         <CommunityCreateDialogFooter
           isCancelable={stage === CommunityCreateStage.One || isCropping}
           isSavable={isCropping}
-          onSaveClick={() => {}} // TODO: add functionality
           isNextDisabled={isNameInvalid || isDescriptionInvalid}
-          onCloseClick={handleClose}
-          onBackClick={handleBack}
-          onNextClick={handleNext}
+          onSave={() => {}} // TODO: add functionality
+          onClose={handleClose}
+          onBack={handleBack}
+          onNext={handleNext}
         />
       </DialogContent>
     </Dialog>

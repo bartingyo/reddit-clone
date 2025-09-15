@@ -6,37 +6,37 @@ type Props = {
   isCancelable: boolean;
   isSavable: boolean;
   isNextDisabled: boolean;
-  onCloseClick: (event: MouseEvent<HTMLButtonElement>) => void;
-  onSaveClick: () => void;
-  onBackClick: () => void;
-  onNextClick: () => void;
+  onClose: (event: MouseEvent<HTMLButtonElement>) => void;
+  onSave: () => void;
+  onBack: () => void;
+  onNext: () => void;
 };
 
 export default function CommunityCreateDialogFooter({
   isNextDisabled,
   isCancelable,
   isSavable,
-  onCloseClick,
-  onBackClick,
-  onSaveClick,
-  onNextClick
+  onClose,
+  onBack,
+  onSave,
+  onNext
 }: Props) {
   return (
     <DialogFooter className="flex-row justify-end">
       {isCancelable && (
         <DialogClose asChild>
-          <Button variant="secondary" size="lg" onClick={onCloseClick}>
+          <Button variant="secondary" size="lg" onClick={onClose}>
             Cancel
           </Button>
         </DialogClose>
       )}
       {!isCancelable && (
-        <Button variant="secondary" size="lg" onClick={onBackClick}>
+        <Button variant="secondary" size="lg" onClick={onBack}>
           Back
         </Button>
       )}
       {isSavable && (
-        <Button variant="primary" size="lg" onClick={onSaveClick}>
+        <Button variant="primary" size="lg" onClick={onSave}>
           Save
         </Button>
       )}
@@ -45,7 +45,7 @@ export default function CommunityCreateDialogFooter({
           variant="primary"
           size="lg"
           disabled={isNextDisabled}
-          onClick={onNextClick}
+          onClick={onNext}
         >
           Next
         </Button>
