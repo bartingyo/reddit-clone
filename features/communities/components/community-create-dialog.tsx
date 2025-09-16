@@ -2,6 +2,7 @@
 
 import Plus from "@/components/icons/plus";
 import AppSidebarMenuButton from "@/components/layouts/app-sidebar-menu-button";
+import Cropper from "@/components/ui/cropper";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Form } from "@/components/ui/form";
 import CommunityCreateDialogFooter from "@/features/communities/components/community-create-dialog-footer";
@@ -11,31 +12,22 @@ import CommunityCreateStageTwo from "@/features/communities/components/community
 import CommunityPreview from "@/features/communities/components/community-preview";
 import {
   COMMUNITY_CREATE_DIALOG_HEADER_TEXT,
+  COMMUNITY_IMAGE_ASPECTS,
   MIN_DESCRIPTION_LENGTH,
   MIN_NAME_LENGTH
 } from "@/features/communities/constants";
 import { communityFormSchema } from "@/features/communities/schema";
 import {
   CommunityCreateStage,
+  CommunityImage,
   CommunityMediaType
 } from "@/features/communities/types";
+import { getAspectCenterCrop } from "@/lib/cropper";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
 import { MouseEvent, SyntheticEvent, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import ReactCrop, {
-  centerCrop,
-  makeAspectCrop,
-  PercentCrop,
-  PixelCrop,
-  type Crop
-} from "react-image-crop";
+import { PercentCrop, PixelCrop, type Crop } from "react-image-crop";
 import z from "zod";
-
-type CommunityImage = {
-  file: File;
-  type: CommunityMediaType;
-};
 
 export default function CommunityCreateDialog() {
   const [stage, setStage] = useState<CommunityCreateStage>(
@@ -107,27 +99,19 @@ export default function CommunityCreateDialog() {
     console.log(values);
   };
 
-  const COMMUNITY_IMAGE_ASPECTS = {
-    banner: 1028 / 128,
-    avatar: 1
-  };
-
   function onImageLoad(
     event: SyntheticEvent<HTMLImageElement>,
     type: CommunityMediaType
   ) {
     const { naturalWidth: width, naturalHeight: height } = event.currentTarget;
 
-    const aspectCrop = makeAspectCrop(
-      { unit: "%", width: 100 },
+    const aspectCenterCrop = getAspectCenterCrop(
       COMMUNITY_IMAGE_ASPECTS[type],
       width,
       height
     );
 
-    const crop = centerCrop(aspectCrop, width, height);
-
-    setCrop(crop);
+    setCrop(aspectCenterCrop);
   }
 
   const onCropChange = (_: PixelCrop, percentageCrop: PercentCrop) =>
@@ -163,23 +147,18 @@ export default function CommunityCreateDialog() {
         )}
 
         {isCropping && (
-          <div className="w-full min-h-[416px] bg-[#000000] p-2 flex items-center justify-center">
-            <ReactCrop
-              crop={crop}
-              onChange={onCropChange}
-              aspect={COMMUNITY_IMAGE_ASPECTS[image.type]}
-            >
-              <Image
-                src={imageURL}
-                alt=""
-                width={1000}
-                height={1000}
-                onLoad={(event) => {
-                  onImageLoad(event, image.type);
-                }}
-              />
-            </ReactCrop>
-          </div>
+          <Cropper
+            crop={crop}
+            onChange={onCropChange}
+            aspect={COMMUNITY_IMAGE_ASPECTS[image.type]}
+            src={imageURL}
+            alt={`${name}'s ${image.type}`}
+            width={500}
+            height={500}
+            onLoad={(event) => {
+              onImageLoad(event, image.type);
+            }}
+          />
         )}
 
         {/* Form */}
