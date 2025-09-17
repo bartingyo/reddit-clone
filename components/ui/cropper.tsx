@@ -4,11 +4,12 @@ import ReactCrop from "react-image-crop";
 
 type Props = Pick<
   ComponentProps<typeof Image>,
-  "src" | "alt" | "width" | "height" | "onLoad"
+  "src" | "alt" | "width" | "height" | "onLoad" | "ref"
 > &
   ComponentProps<typeof ReactCrop>;
 
 export default function Cropper({
+  ref,
   src,
   alt,
   width,
@@ -20,6 +21,7 @@ export default function Cropper({
     <div className="w-full min-h-[416px] bg-[#000000] p-2 flex items-center justify-center">
       <ReactCrop {...props}>
         <Image
+          ref={ref}
           src={src}
           alt={alt}
           width={width}

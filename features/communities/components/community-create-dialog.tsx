@@ -24,16 +24,16 @@ import {
 } from "@/features/communities/types";
 import { getAspectCenterCrop } from "@/lib/cropper";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MouseEvent, SyntheticEvent, useMemo, useState } from "react";
+import { MouseEvent, SyntheticEvent, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { PercentCrop, PixelCrop, type Crop } from "react-image-crop";
+import { convertToPixelCrop, PercentCrop, PixelCrop } from "react-image-crop";
 import z from "zod";
 
 export default function CommunityCreateDialog() {
   const [stage, setStage] = useState<CommunityCreateStage>(
     CommunityCreateStage.Two
   );
-  const [crop, setCrop] = useState<Crop>();
+  const [percentCrop, setPercentCrop] = useState<PercentCrop>();
   const [image, setImage] = useState<CommunityImage | null>(null);
   const [bannerImage, setBannerImage] = useState<string | undefined>(undefined);
   const [avatarImage, setAvatarImage] = useState<string | undefined>(undefined);
@@ -111,16 +111,19 @@ export default function CommunityCreateDialog() {
       height
     );
 
-    setCrop(aspectCenterCrop);
+    setPercentCrop(aspectCenterCrop);
   }
 
   const onCropChange = (_: PixelCrop, percentageCrop: PercentCrop) =>
-    setCrop(percentageCrop);
+    setPercentCrop(percentageCrop);
 
   const imageURL = useMemo(
     () => (image ? URL.createObjectURL(image.file) : ""),
     [image]
   );
+
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
 
   return (
     <Dialog>
@@ -148,7 +151,8 @@ export default function CommunityCreateDialog() {
 
         {isCropping && (
           <Cropper
-            crop={crop}
+            ref={imageRef}
+            crop={percentCrop}
             onChange={onCropChange}
             aspect={COMMUNITY_IMAGE_ASPECTS[image.type]}
             src={imageURL}
@@ -192,11 +196,58 @@ export default function CommunityCreateDialog() {
           isCancelable={stage === CommunityCreateStage.One || isCropping}
           isSavable={isCropping}
           isNextDisabled={isNameInvalid || isDescriptionInvalid}
-          onSave={() => {}} // TODO: add functionality
+          onSave={() => {
+            // 1. get the image, canvas, and percent crop size
+            // 2. use canvas to get cropped image using the drawImage method
+            // 2.1 with the canvas get the context
+            const canvasElement = canvasRef.current;
+            const imageElement = imageRef.current;
+            if (!canvasElement || !imageElement || !percentCrop) {
+              throw new Error(
+                "Not enough information, missing canvas, image, or percentCrop ...."
+              );
+            }
+            const context = canvasElement.getContext("2d");
+
+            if (!context) {
+              throw new Error("canvas context is not available!");
+            }
+
+            // 2.2 get the image width and height
+            const { width, height, naturalWidth, naturalHeight } = imageElement;
+            // 2.3 convert percentage crop object to pixel crop
+            // 2.4 get the values of sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight
+            const {
+              x: sx,
+              y: sy,
+              width: sWidth,
+              height: sHeight
+            } = convertToPixelCrop(percentCrop, naturalWidth, naturalHeight);
+
+            canvasElement.width = sWidth;
+            canvasElement.height = sHeight;
+            // 2.5 draw the image
+            context.drawImage(
+              imageElement,
+              sx,
+              sy,
+              sWidth,
+              sHeight,
+              0,
+              0,
+              sWidth,
+              sHeight
+            );
+            // 3. convert the canvas to blob
+            // 3.1 get the cropped image url from blob so that we can render on preview card
+            // 3.2 get the cropped image file from blob to send request to our backend to process in the future
+          }} // TODO: add functionality
           onClose={handleClose}
           onBack={handleBack}
           onNext={handleNext}
         />
+
+        {isCropping && <canvas ref={canvasRef} />}
       </DialogContent>
     </Dialog>
   );
