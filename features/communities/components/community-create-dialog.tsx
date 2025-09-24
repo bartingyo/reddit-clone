@@ -18,18 +18,11 @@ import useCommunityCreateForm from "@/features/communities/hooks/use-community-c
 import useCommunityCreateStageOne from "@/features/communities/hooks/use-community-create-stage-one";
 import {
   CommunityCreateStage,
-  CommunityImage,
   CommunityMediaType
 } from "@/features/communities/types";
+import useCropper from "@/hooks/use-cropper";
 import useStage from "@/hooks/use-stage";
-import { getAspectCenterCrop } from "@/lib/cropper";
-import { MouseEvent, SyntheticEvent, useMemo, useRef, useState } from "react";
-import { convertToPixelCrop, PercentCrop, PixelCrop } from "react-image-crop";
-
-type CommunityPreviewImages = {
-  banner?: string;
-  avatar?: string;
-};
+import { MouseEvent } from "react";
 
 export default function CommunityCreateDialog() {
   // form
@@ -45,57 +38,34 @@ export default function CommunityCreateDialog() {
     useCommunityCreateStageOne({ form, stage });
 
   // copper
-  const [percentCrop, setPercentCrop] = useState<PercentCrop>();
-  const [image, setImage] = useState<CommunityImage | null>(null);
-  const [previewImages, setPreviewImages] = useState<CommunityPreviewImages>(
-    {}
-  );
-  const isCropping =
-    (stage === CommunityCreateStage.BannerStage ||
-      stage === CommunityCreateStage.AvatarStage) &&
-    !!image;
-  const resetCropping = (event?: MouseEvent<HTMLButtonElement>) => {
-    if (isCropping) {
-      event?.preventDefault();
+  const bannerCropper = useCropper({
+    aspect: COMMUNITY_IMAGE_ASPECTS["banner"],
+    onCropComplete: (file) => {
+      form.setValue("banner", file);
       moveTo(CommunityCreateStage.Two);
-      setImage(null);
     }
-  };
-  function onImageLoad(
-    event: SyntheticEvent<HTMLImageElement>,
-    type: CommunityMediaType
-  ) {
-    const { naturalWidth: width, naturalHeight: height } = event.currentTarget;
-
-    const aspectCenterCrop = getAspectCenterCrop(
-      COMMUNITY_IMAGE_ASPECTS[type],
-      width,
-      height
-    );
-
-    setPercentCrop(aspectCenterCrop);
-  }
-
-  const onCropChange = (_: PixelCrop, percentageCrop: PercentCrop) =>
-    setPercentCrop(percentageCrop);
-
-  const imageURL = useMemo(
-    () => (image ? URL.createObjectURL(image.file) : ""),
-    [image]
-  );
-
-  const imageRef = useRef<HTMLImageElement>(null);
+  });
+  const avatarCropper = useCropper({
+    aspect: COMMUNITY_IMAGE_ASPECTS["avatar"],
+    onCropComplete: (file) => {
+      form.setValue("banner", file);
+      moveTo(CommunityCreateStage.Two);
+    }
+  });
 
   // stage 2
   const { banner, avatar } = form.watch();
   const isStageTwo = stage === CommunityCreateStage.Two;
 
   const handleFile = async (file: File, type: CommunityMediaType) => {
-    // set image stage with the file and type, we do not have it yet.
-    setImage({ file, type });
-    // set stage either banner cropping or avatar cropping
-    if (type === "banner") moveTo(CommunityCreateStage.BannerStage);
-    if (type === "avatar") moveTo(CommunityCreateStage.AvatarStage);
+    if (type === "banner") {
+      moveTo(CommunityCreateStage.BannerStage);
+      bannerCropper.addOriginalImage(file);
+    }
+    if (type === "avatar") {
+      moveTo(CommunityCreateStage.AvatarStage);
+      avatarCropper.addOriginalImage(file);
+    }
   };
 
   const handleFileError = (error: Error, type: CommunityMediaType) => {
@@ -110,7 +80,28 @@ export default function CommunityCreateDialog() {
   const resetField = (type: CommunityMediaType) => {
     form.resetField(type);
 
-    setPreviewImages((prev) => ({ ...prev, [type]: undefined }));
+    if (type === "banner") {
+      bannerCropper.removeCroppedImage();
+    }
+
+    if (type === "avatar") {
+      avatarCropper.removeCroppedImage();
+    }
+  };
+
+  const croppers = [bannerCropper, avatarCropper];
+  const activeCropper = croppers.find((cropper) => cropper.originalImage);
+  const isCropping =
+    (stage === CommunityCreateStage.BannerStage ||
+      stage === CommunityCreateStage.AvatarStage) &&
+    !!activeCropper;
+
+  const handleClose = (event: MouseEvent<HTMLButtonElement>) => {
+    if (isCropping) {
+      event?.preventDefault();
+      moveTo(CommunityCreateStage.Two);
+      activeCropper.reset();
+    }
   };
 
   return (
@@ -131,27 +122,13 @@ export default function CommunityCreateDialog() {
           <CommunityPreview
             name={name}
             description={description}
-            avatar={previewImages.avatar}
-            banner={previewImages.banner}
+            avatar={avatarCropper.croppedImage}
+            banner={bannerCropper.croppedImage}
             withImages={stage === CommunityCreateStage.Two}
           />
         )}
 
-        {isCropping && (
-          <Cropper
-            ref={imageRef}
-            crop={percentCrop}
-            onChange={onCropChange}
-            aspect={COMMUNITY_IMAGE_ASPECTS[image.type]}
-            src={imageURL}
-            alt={`${name}'s ${image.type}`}
-            width={500}
-            height={500}
-            onLoad={(event) => {
-              onImageLoad(event, image.type);
-            }}
-          />
-        )}
+        {isCropping && <Cropper {...activeCropper.props} />}
 
         {/* Form */}
         {!isCropping && (
@@ -184,73 +161,8 @@ export default function CommunityCreateDialog() {
           isCancelable={stage === CommunityCreateStage.One || isCropping}
           isSavable={isCropping}
           isNextDisabled={isStageOneInvalid}
-          onSave={() => {
-            // 1. get the image, canvas, and percent crop size
-            // 2. use canvas to get cropped image using the drawImage method
-            // 2.1 with the canvas get the context
-            const canvasElement = document.createElement("canvas");
-            const imageElement = imageRef.current;
-            if (!imageElement || !percentCrop || !image) {
-              throw new Error(
-                "Not enough information, missing image, imageElement, or percentCrop ...."
-              );
-            }
-            const context = canvasElement.getContext("2d");
-
-            if (!context) {
-              throw new Error("canvas context is not available!");
-            }
-
-            // 2.2 get the image width and height
-            const { naturalWidth, naturalHeight } = imageElement;
-            // 2.3 convert percentage crop object to pixel crop
-            // 2.4 get the values of sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight
-            const {
-              x: sx,
-              y: sy,
-              width: sWidth,
-              height: sHeight
-            } = convertToPixelCrop(percentCrop, naturalWidth, naturalHeight);
-
-            canvasElement.width = sWidth;
-            canvasElement.height = sHeight;
-            // 2.5 draw the image
-            context.drawImage(
-              imageElement,
-              sx,
-              sy,
-              sWidth,
-              sHeight,
-              0,
-              0,
-              sWidth,
-              sHeight
-            );
-            // 3. convert the canvas to blob
-
-            canvasElement.toBlob((blob) => {
-              if (!blob) {
-                throw new Error("blob is not available");
-              }
-              // 3.1 get the cropped image url from blob
-              // 3.2 get the cropped image file from blob
-              const croppedImageURL = URL.createObjectURL(blob);
-              const croppedImageFile = new File([blob], image.file.name, {
-                type: image.file.type
-              });
-
-              // 3.3 set the file to the form to send request to our backend to process in the future
-              form.setValue(image.type, croppedImageFile);
-              // 3.4 set the image url state so that we can render on preview card
-              setPreviewImages((prev) => ({
-                ...prev,
-                [image.type]: croppedImageURL
-              }));
-
-              resetCropping();
-            });
-          }} // TODO: add functionality
-          onClose={resetCropping}
+          onSave={activeCropper?.cropImage}
+          onClose={handleClose}
           onBack={handleBack}
           onNext={handleNext}
         />
