@@ -22,6 +22,7 @@ import {
   CommunityImage,
   CommunityMediaType
 } from "@/features/communities/types";
+import useStage from "@/hooks/use-stage";
 import { getAspectCenterCrop } from "@/lib/cropper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MouseEvent, SyntheticEvent, useMemo, useRef, useState } from "react";
@@ -35,15 +36,13 @@ type CommunityPreviewImages = {
 };
 
 export default function CommunityCreateDialog() {
-  const [stage, setStage] = useState<CommunityCreateStage>(
-    CommunityCreateStage.Two
-  );
-  const [percentCrop, setPercentCrop] = useState<PercentCrop>();
-  const [image, setImage] = useState<CommunityImage | null>(null);
-  const [previewImages, setPreviewImages] = useState<CommunityPreviewImages>(
-    {}
-  );
+  // moving to stage
+  const { stage, handleBack, handleNext, moveTo } =
+    useStage<CommunityCreateStage>({
+      initialState: CommunityCreateStage.One
+    });
 
+  // form
   const form = useForm<z.infer<typeof communityFormSchema>>({
     mode: "onTouched",
     resolver: zodResolver(communityFormSchema),
@@ -52,58 +51,33 @@ export default function CommunityCreateDialog() {
       description: ""
     }
   });
-
-  const { name, description, banner, avatar } = form.watch();
-  const isNameInvalid = name.length < MIN_NAME_LENGTH;
-  const isDescriptionInvalid = description.length < MIN_DESCRIPTION_LENGTH;
-  const isPreviewVisible =
-    stage === CommunityCreateStage.One || stage === CommunityCreateStage.Two;
-  const isCropping =
-    (stage === CommunityCreateStage.BannerStage ||
-      stage === CommunityCreateStage.AvatarStage) &&
-    !!image;
-
-  const resetCropping = (event?: MouseEvent<HTMLButtonElement>) => {
-    if (isCropping) {
-      event?.preventDefault();
-      setStage(CommunityCreateStage.Two);
-      setImage(null);
-    }
-  };
-  const handleBack = () => {
-    setStage((prev) => prev - 1);
-  };
-  const handleNext = () => {
-    setStage((prev) => prev + 1);
-  };
-
-  const handleFile = async (file: File, type: CommunityMediaType) => {
-    // set image stage with the file and type, we do not have it yet.
-    setImage({ file, type });
-    // set stage either banner cropping or avatar cropping
-    if (type === "banner") setStage(CommunityCreateStage.BannerStage);
-    if (type === "avatar") setStage(CommunityCreateStage.AvatarStage);
-  };
-
-  const handleFileError = (error: Error, type: CommunityMediaType) => {
-    resetField(type);
-    form.setError(type, { message: error.message });
-  };
-
-  const handleFileDelete = (type: CommunityMediaType) => {
-    resetField(type);
-  };
-
-  const resetField = (type: CommunityMediaType) => {
-    form.resetField(type);
-
-    setPreviewImages((prev) => ({ ...prev, [type]: undefined }));
-  };
-
   const onSubmit = (values: z.infer<typeof communityFormSchema>) => {
     console.log(values);
   };
 
+  // stage 1
+  const { name, description } = form.watch();
+  const isNameInvalid = name.length < MIN_NAME_LENGTH;
+  const isDescriptionInvalid = description.length < MIN_DESCRIPTION_LENGTH;
+  const isStageOne = stage === CommunityCreateStage.One;
+
+  // copper
+  const [percentCrop, setPercentCrop] = useState<PercentCrop>();
+  const [image, setImage] = useState<CommunityImage | null>(null);
+  const [previewImages, setPreviewImages] = useState<CommunityPreviewImages>(
+    {}
+  );
+  const isCropping =
+    (stage === CommunityCreateStage.BannerStage ||
+      stage === CommunityCreateStage.AvatarStage) &&
+    !!image;
+  const resetCropping = (event?: MouseEvent<HTMLButtonElement>) => {
+    if (isCropping) {
+      event?.preventDefault();
+      moveTo(CommunityCreateStage.Two);
+      setImage(null);
+    }
+  };
   function onImageLoad(
     event: SyntheticEvent<HTMLImageElement>,
     type: CommunityMediaType
@@ -129,6 +103,33 @@ export default function CommunityCreateDialog() {
 
   const imageRef = useRef<HTMLImageElement>(null);
 
+  // stage 2
+  const { banner, avatar } = form.watch();
+  const isStageTwo = stage === CommunityCreateStage.Two;
+
+  const handleFile = async (file: File, type: CommunityMediaType) => {
+    // set image stage with the file and type, we do not have it yet.
+    setImage({ file, type });
+    // set stage either banner cropping or avatar cropping
+    if (type === "banner") moveTo(CommunityCreateStage.BannerStage);
+    if (type === "avatar") moveTo(CommunityCreateStage.AvatarStage);
+  };
+
+  const handleFileError = (error: Error, type: CommunityMediaType) => {
+    resetField(type);
+    form.setError(type, { message: error.message });
+  };
+
+  const handleFileDelete = (type: CommunityMediaType) => {
+    resetField(type);
+  };
+
+  const resetField = (type: CommunityMediaType) => {
+    form.resetField(type);
+
+    setPreviewImages((prev) => ({ ...prev, [type]: undefined }));
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -143,7 +144,7 @@ export default function CommunityCreateDialog() {
         />
 
         {/* Preview card */}
-        {isPreviewVisible && (
+        {(isStageOne || isStageTwo) && (
           <CommunityPreview
             name={name}
             description={description}
