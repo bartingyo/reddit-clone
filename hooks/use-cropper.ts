@@ -75,6 +75,7 @@ export default function useCropper<T extends PercentCrop | PixelCrop>({
 
     setCroppedImage(url);
     onCropComplete?.(file, url);
+    setOriginalImage(null);
   };
 
   const props = {
