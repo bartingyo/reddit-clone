@@ -1,4 +1,11 @@
-import { PercentCrop, centerCrop, makeAspectCrop } from "react-image-crop";
+import {
+  Crop,
+  PercentCrop,
+  centerCrop,
+  convertToPercentCrop,
+  convertToPixelCrop,
+  makeAspectCrop
+} from "react-image-crop";
 
 export const getAspectCenterCrop = (
   aspect: number,
@@ -13,4 +20,11 @@ export const getAspectCenterCrop = (
   );
 
   return centerCrop(aspectCrop, width, height);
+};
+
+export const getPixelCrop = (crop: Crop, width: number, height: number) => {
+  const percentCrop =
+    crop.unit === "%" ? crop : convertToPercentCrop(crop, width, height);
+
+  return convertToPixelCrop(percentCrop, width, height);
 };
