@@ -1,4 +1,4 @@
-import Chip, { ChipSelectable } from "@/components/ui/chip";
+import Chip, { ChipDeleteIcon, ChipSelectable } from "@/components/ui/chip";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 const meta = {
@@ -30,6 +30,27 @@ export const Selectable = {
         </Chip>
         <Chip asChild variant={"bordered"}>
           <ChipSelectable>Bordered</ChipSelectable>
+        </Chip>
+      </div>
+    );
+  }
+} satisfies Story;
+
+export const SelectableWithDeleteIcon = {
+  render: () => {
+    return (
+      <div className="flex items-center gap-2">
+        <Chip asChild>
+          <ChipSelectable>
+            <span>Default</span>
+            <ChipDeleteIcon />
+          </ChipSelectable>
+        </Chip>
+        <Chip asChild variant={"bordered"}>
+          <ChipSelectable>
+            <span>Bordered</span>
+            <ChipDeleteIcon />
+          </ChipSelectable>
         </Chip>
       </div>
     );

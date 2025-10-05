@@ -1,3 +1,4 @@
+import XCircleSolid from "@/components/icons/x-circle-solid";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, VariantProps } from "class-variance-authority";
@@ -5,13 +6,15 @@ import { ComponentProps } from "react";
 
 const chipVariants = cva(
   cn(
+    "group",
     "border",
     "h-8 px-2.5 rounded-full",
-    "inline-flex items-center",
+    "inline-flex items-center gap-1",
     "text-[#000000] text-xs font-semibold",
     "has-focus-visible:outline has-focus-visible:outline-blue-700",
     "data-[slot=chip-selectable]:cursor-pointer",
-    "data-[slot=chip-selectable]:select-none"
+    "data-[slot=chip-selectable]:select-none",
+    "has-checked:has-data-[slot=chip-delete-icon]:pr-0"
   ),
   {
     variants: {
@@ -19,9 +22,9 @@ const chipVariants = cva(
         default: cn(
           "border-transparent bg-[#E5EBEE]",
           "data-[slot=chip-selectable]:hover:bg-[#DBE4E9] data-[slot=chip-selectable]:active:bg-[#bbc2c8]",
-          "has-checked:data-[slot=chip-selectable]:bg-[#C9D7DE]"
+          "data-[slot=chip-selectable]:has-checked:bg-[#C9D7DE]"
         ),
-        bordered: cn(" border-[#00000033]")
+        bordered: cn("border-[#00000033]")
       }
     },
     defaultVariants: {
@@ -65,9 +68,24 @@ export function ChipSelectable({
   ...props
 }: ChipSelectableProps) {
   return (
-    <label data-slot="chip-selectable" className={cn("", className)}>
-      <span>{children}</span>
+    <label data-slot="chip-selectable" className={cn(className)}>
+      {children}
       <input type="checkbox" className="sr-only" {...props} />
     </label>
+  );
+}
+
+export function ChipDeleteIcon() {
+  return (
+    <span
+      data-slot="chip-delete-icon"
+      className={cn(
+        "size-8 rounded-full",
+        "hidden group-has-checked:flex items-center justify-center",
+        "hover:bg-[#DBE4E9] active:bg-[#bbc2c8]"
+      )}
+    >
+      <XCircleSolid className="size-5" />
+    </span>
   );
 }
