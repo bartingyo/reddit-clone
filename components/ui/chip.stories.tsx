@@ -1,5 +1,7 @@
 import Chip, { ChipDeleteIcon, ChipSelectable } from "@/components/ui/chip";
+import { ChipGroup } from "@/components/ui/chip-group";
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
+import { useState } from "react";
 
 const meta = {
   title: "Design System/Chip",
@@ -53,6 +55,38 @@ export const SelectableWithDeleteIcon = {
           </ChipSelectable>
         </Chip>
       </div>
+    );
+  }
+} satisfies Story;
+
+export const Group = {
+  render: () => {
+    const [items, setItems] = useState<string[]>(["0", "9"]);
+
+    return (
+      <>
+        <ChipGroup className="min-h-8 mb-6" values={items} onChange={setItems}>
+          {items.map((value) => (
+            <Chip variant={"bordered"} key={value} asChild>
+              <ChipSelectable value={value}>
+                <span>Item {value}</span>
+                <ChipDeleteIcon />
+              </ChipSelectable>
+            </Chip>
+          ))}
+        </ChipGroup>
+
+        <ChipGroup values={items} onChange={setItems}>
+          {Array.from({ length: 10 }).map((_, index) => (
+            <Chip key={index} asChild>
+              <ChipSelectable value={index}>
+                <span>Item {index}</span>
+                <ChipDeleteIcon />
+              </ChipSelectable>
+            </Chip>
+          ))}
+        </ChipGroup>
+      </>
     );
   }
 } satisfies Story;
