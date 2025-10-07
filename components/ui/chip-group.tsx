@@ -1,7 +1,11 @@
-// 1. create context
-
 import { cn } from "@/lib/utils";
-import { ChangeEvent, createContext, ReactNode, useContext } from "react";
+import {
+  ChangeEvent,
+  ComponentProps,
+  createContext,
+  ReactNode,
+  useContext
+} from "react";
 
 type ChipGroupContextType = {
   isChecked: (value: string) => boolean;
@@ -11,8 +15,7 @@ type ChipGroupContextType = {
 const ChipGroupContext = createContext<ChipGroupContextType | undefined>(
   undefined
 );
-// 2. provide provider
-// 3. use context
+
 export const useChipGroup = () => useContext(ChipGroupContext);
 
 type Props = {
@@ -43,9 +46,55 @@ export function ChipGroup({
 
   return (
     <ChipGroupContext.Provider value={{ isChecked, onChange: handleChange }}>
-      <div className={cn("flex flex-wrap items-center gap-2", className)}>
+      <div
+        data-slot="chip-group"
+        className={cn(
+          "flex flex-wrap items-center gap-2",
+          "has-data-[slot=chip-sub-group]:block",
+          className
+        )}
+      >
         {children}
       </div>
     </ChipGroupContext.Provider>
+  );
+}
+
+export function ChipSubGroup({ className, ...props }: ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="chip-sub-group"
+      className={cn("mb-6", className)}
+      {...props}
+    />
+  );
+}
+
+export function ChipSubGroupContent({
+  className,
+  ...props
+}: ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="chip-sub-group-content"
+      className={cn("flex flex-wrap items-center gap-2", className)}
+      {...props}
+    />
+  );
+}
+
+export function ChipGroupTitle({ className, ...props }: ComponentProps<"h3">) {
+  return (
+    <div
+      data-slot="chip-group-title"
+      className={cn(
+        "flex items-center gap-2",
+        "text-sm font-bold text-[#333D42]",
+        "mb-1",
+        "[&_svg]:size-5",
+        className
+      )}
+      {...props}
+    />
   );
 }
