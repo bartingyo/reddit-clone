@@ -1,8 +1,9 @@
 import XCircleSolid from "@/components/icons/x-circle-solid";
+import { useChipGroup } from "@/components/ui/chip-group";
 import { cn } from "@/lib/utils";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, VariantProps } from "class-variance-authority";
-import { ComponentProps } from "react";
+import { ChangeEvent, ComponentProps } from "react";
 
 const chipVariants = cva(
   cn(
@@ -65,12 +66,30 @@ type ChipSelectableProps = Pick<
 export function ChipSelectable({
   children,
   className,
+  value,
+  checked,
+  onChange,
   ...props
 }: ChipSelectableProps) {
+  const context = useChipGroup();
+
+  const isChecked = checked || context?.isChecked(value?.toString() || "");
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    context?.onChange(event);
+    onChange?.(event);
+  };
+
   return (
     <label data-slot="chip-selectable" className={cn(className)}>
       {children}
-      <input type="checkbox" className="sr-only" {...props} />
+      <input
+        type="checkbox"
+        className="sr-only"
+        checked={isChecked}
+        value={value}
+        onChange={handleChange}
+        {...props}
+      />
     </label>
   );
 }
