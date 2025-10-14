@@ -47,6 +47,9 @@ export default function CommunityCreateDialog() {
   const isStageThree = stage === CommunityCreateStage.Three;
   const isStageFour = stage === CommunityCreateStage.Four;
 
+  const { topics } = form.watch();
+  const isStageThreeInvalid = isStageThree && topics.length < 1;
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -116,7 +119,7 @@ export default function CommunityCreateDialog() {
           isCancelable={isStageOne || isCropping}
           isSavable={isCropping}
           isSubmittable={isStageFour}
-          isNextDisabled={isStageOneInvalid}
+          isNextDisabled={isStageOneInvalid || isStageThreeInvalid}
           onSave={activeCropper?.cropImage}
           onClose={handleClose}
           onBack={handleBack}
