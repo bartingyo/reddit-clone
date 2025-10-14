@@ -23,6 +23,14 @@ export const COMMUNITY_CREATE_DIALOG_HEADER_TEXT = {
   [CommunityCreateStage.AvatarStage]: {
     title: "Style your community",
     description: "Icon must be 1:1"
+  },
+  [CommunityCreateStage.Three]: {
+    title: "Style your community",
+    description: "Icon must be 1:1"
+  },
+  [CommunityCreateStage.Four]: {
+    title: "Style your community",
+    description: "Icon must be 1:1"
   }
 };
 export const COMMUNITY_IMAGE_ASPECTS = {

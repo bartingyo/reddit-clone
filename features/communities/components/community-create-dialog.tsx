@@ -101,6 +101,7 @@ export default function CommunityCreateDialog() {
         <CommunityCreateDialogFooter
           isCancelable={stage === CommunityCreateStage.One || isCropping}
           isSavable={isCropping}
+          isSubmittable={stage === CommunityCreateStage.Four}
           isNextDisabled={isStageOneInvalid}
           onSave={activeCropper?.cropImage}
           onClose={handleClose}
