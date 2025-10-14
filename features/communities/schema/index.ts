@@ -3,7 +3,7 @@ import z from "zod";
 
 export const communityFormSchema = z.object({
   name: z.string().min(MIN_NAME_LENGTH, {
-    message: `Please lengthen this text to ${MIN_NAME_LENGTH} characters or more`
+    error: `Please lengthen this text to ${MIN_NAME_LENGTH} characters or more`
   }),
   description: z.string(),
   banner: z
@@ -19,5 +19,6 @@ export const communityFormSchema = z.object({
       ["image/gif", "image/jpeg", "image/png", "image/svg+xml", "image/webp"],
       { error: "Invalid MIME type" }
     )
-    .optional()
+    .optional(),
+  topics: z.array(z.string()).max(3, { error: "Only 3 topics can be added" })
 });
