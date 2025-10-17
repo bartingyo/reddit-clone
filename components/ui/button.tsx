@@ -7,7 +7,7 @@ const buttonVariants = cva(
     "flex items-center justify-center gap-2",
     "cursor-pointer rounded-full font-semibold",
     "data-[shape='circle']:px-0",
-    "disabled:bg-[#f3f3f3] disabled:text-[#b7b7b7]"
+    "disabled:bg-[#f3f3f3] disabled:text-[#b7b7b7] disabled:cursor-not-allowed"
   ),
   {
     variants: {

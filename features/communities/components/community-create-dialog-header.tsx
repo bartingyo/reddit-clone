@@ -15,7 +15,7 @@ export default function CommunityCreateDialogHeader({
 }: Props) {
   return (
     <DialogHeader className="text-left gap-8">
-      <DialogTitle className="text-2xl text-[#333D42] font-bold tracking-tight">
+      <DialogTitle className="text-2xl text-[#333D42] font-bold tracking-tight pr-9">
         {title}
       </DialogTitle>
       <DialogDescription className="text-sm text-[#434343]">

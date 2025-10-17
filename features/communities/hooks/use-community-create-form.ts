@@ -9,7 +9,8 @@ export default function useCommunityCreateForm() {
     resolver: zodResolver(communityFormSchema),
     defaultValues: {
       name: "",
-      description: ""
+      description: "",
+      topics: []
     }
   });
   const onSubmit = (values: z.infer<typeof communityFormSchema>) => {

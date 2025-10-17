@@ -23,6 +23,16 @@ export const COMMUNITY_CREATE_DIALOG_HEADER_TEXT = {
   [CommunityCreateStage.AvatarStage]: {
     title: "Style your community",
     description: "Icon must be 1:1"
+  },
+  [CommunityCreateStage.Three]: {
+    title: "Add topics",
+    description:
+      "Add up to 3 topics to help interested redditors find your community."
+  },
+  [CommunityCreateStage.Four]: {
+    title: "What kind of community is this?",
+    description:
+      "Decide who can view and contribute in your community. Only public communities show up in search. Important: Once set, you will need to submit a request to change your community type."
   }
 };
 export const COMMUNITY_IMAGE_ASPECTS = {

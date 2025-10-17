@@ -8,6 +8,7 @@ import { Form } from "@/components/ui/form";
 import CommunityCreateDialogFooter from "@/features/communities/components/community-create-dialog-footer";
 import CommunityCreateDialogHeader from "@/features/communities/components/community-create-dialog-header";
 import CommunityCreateStageOne from "@/features/communities/components/community-create-stage-one";
+import CommunityCreateStageThree from "@/features/communities/components/community-create-stage-three";
 import CommunityCreateStageTwo from "@/features/communities/components/community-create-stage-two";
 import CommunityPreview from "@/features/communities/components/community-preview";
 import { COMMUNITY_CREATE_DIALOG_HEADER_TEXT } from "@/features/communities/constants";
@@ -43,7 +44,11 @@ export default function CommunityCreateDialog() {
     moveTo
   });
 
-  console.log("rendering");
+  const isStageThree = stage === CommunityCreateStage.Three;
+  const isStageFour = stage === CommunityCreateStage.Four;
+
+  const { topics } = form.watch();
+  const isStageThreeInvalid = isStageThree && topics.length < 1;
 
   return (
     <Dialog>
@@ -65,7 +70,7 @@ export default function CommunityCreateDialog() {
             description={description}
             avatar={croppedAvatar}
             banner={croppedBanner}
-            withImages={stage === CommunityCreateStage.Two}
+            withImages={isStageTwo}
           />
         )}
 
@@ -75,7 +80,7 @@ export default function CommunityCreateDialog() {
         {!isCropping && (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-              {stage === CommunityCreateStage.One && (
+              {isStageOne && (
                 <CommunityCreateStageOne
                   formControl={form.control}
                   name={name}
@@ -83,7 +88,7 @@ export default function CommunityCreateDialog() {
                 />
               )}
 
-              {stage === CommunityCreateStage.Two && (
+              {isStageTwo && (
                 <CommunityCreateStageTwo
                   formControl={form.control}
                   banner={banner}
@@ -93,15 +98,28 @@ export default function CommunityCreateDialog() {
                   onFileError={handleFileError}
                 />
               )}
+
+              {isStageThree && (
+                <CommunityCreateStageThree
+                  formControl={form.control}
+                  onTopicChange={() => form.trigger("topics")}
+                  onTopicError={(error) =>
+                    form.setError("topics", {
+                      message: error.message
+                    })
+                  }
+                />
+              )}
             </form>
           </Form>
         )}
 
         {/* Footer */}
         <CommunityCreateDialogFooter
-          isCancelable={stage === CommunityCreateStage.One || isCropping}
+          isCancelable={isStageOne || isCropping}
           isSavable={isCropping}
-          isNextDisabled={isStageOneInvalid}
+          isSubmittable={isStageFour}
+          isNextDisabled={isStageOneInvalid || isStageThreeInvalid}
           onSave={activeCropper?.cropImage}
           onClose={handleClose}
           onBack={handleBack}

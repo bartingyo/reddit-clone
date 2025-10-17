@@ -5,6 +5,7 @@ import { MouseEvent } from "react";
 type Props = {
   isCancelable: boolean;
   isSavable: boolean;
+  isSubmittable: boolean;
   isNextDisabled: boolean;
   onClose: (event: MouseEvent<HTMLButtonElement>) => void;
   onSave?: () => void;
@@ -15,6 +16,7 @@ type Props = {
 export default function CommunityCreateDialogFooter({
   isNextDisabled,
   isCancelable,
+  isSubmittable,
   isSavable,
   onClose,
   onBack,
@@ -40,7 +42,12 @@ export default function CommunityCreateDialogFooter({
           Save
         </Button>
       )}
-      {!isSavable && (
+      {isSubmittable && (
+        <Button variant="primary" size="lg">
+          Create Community
+        </Button>
+      )}
+      {!isSavable && !isSubmittable && (
         <Button
           variant="primary"
           size="lg"
